@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pay from Glide test form</title>
+  <meta name="description" content="Pay from Glide test form">
+  <meta name="author" content="Magz Nikitin">
+  <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
+  <script>
+    this.pay = function (opt) {
+    var widget = new cp.CloudPayments();
+    console.log("Im pay");
+      widget.pay('auth', // или 'charge'
+        opt,
+          {
+              onSuccess: function (result) { // success
+                  //действие при успешной оплате
+                  console.log("onSuccess", result);
+              },
+              onFail: function (reason, result) { // fail
+                  //действие при неуспешной оплате
+                  console.log("onFail", reason, result);
+              },
+              onComplete: function (paymentResult, options) { //Вызывается как только виджет получает от api.cloudpayments ответ с результатом транзакции.
+                  //например вызов вашей аналитики Facebook Pixel
+
+                  console.log("onComplete", paymentResult, options);
+              }
+          }
+      )
+    };
+    window.onload = (event) => {
+      const opt = { //options
+            publicId: 'pk_2f5e29944443868aca9865d1b4b5e', //id из личного кабинета
+            description: 'Оплата товаров в Glide-магазине', //назначение
+            amount: <?= amount ?>, //сумма
+            currency: <?= currency ?>, //валюта
+            accountId: <?= accountId ?>, //идентификатор плательщика (необязательно)
+            invoiceId: <?= invoiceId ?>, //номер заказа  (необязательно)
+            email: '', //email плательщика (необязательно)
+            skin: "modern", //дизайн виджета (необязательно)
+            data: {
+                myProp: 'myProp value'
+            }
+        }
+      console.log(opt);
+      
+      if (opt.amount) {
+        opt.amount = parseFloat(opt.amount);
+        this.pay(opt);
+      }
+      else
+        console.log("No ammount");
+    };
+  </script>
+</body>
+</html>
